@@ -128,11 +128,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Dataset files
-dataset/
-*.h5
-*.hdf5
-
 # Model files
 *.pkl
 *.joblib
