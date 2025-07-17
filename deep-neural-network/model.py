@@ -129,12 +129,11 @@ class DeepNeuralNetwork:
             ## Biases can be initialized by zeroes
             self.parameters['b' + str(i+1)] -= self.learning_rate * self.grads['db' + str(i+1)] 
 
-    # Update _compute_cost for multi-class classification
     def _compute_cost(self, A: np.ndarray, Y: np.ndarray) -> float:
         m = Y.shape[1]
         # Categorical cross-entropy loss
         A_clipped = np.clip(A, 1e-15, 1 - 1e-15)
-        cost = -np.sum(Y * np.log(A_clipped)) / m
+        cost = -1 / m * np.sum(Y * np.log(A_clipped) + (1 - Y) * np.log(1 - A_clipped))
         return np.squeeze(cost)
 
     def initialize_parameters(self):
