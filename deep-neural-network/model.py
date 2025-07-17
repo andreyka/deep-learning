@@ -95,21 +95,33 @@ class DeepNeuralNetwork:
         m = A_prev.shape[1]
         Z = self.cache['Z' + str(layer)]
         W = self.cache['W' + str(layer)]
-        activation = self._get_activation_for_layer(self.activations[layer - 1]) 
-        dZ = dA * activation(Z, derivative=True)
+        activation_name = self.activations[layer - 1]
+        # Calculate the derivative of the activation function
+        if activation_name == 'softmax':
+             dZ = dA
+        else:
+             activation = self._get_activation_for_layer(activation_name)
+             dZ = dA * activation(Z, derivative=True)
+
+        # Calculate gradients
         dW = np.dot(dZ, A_prev.T) / m
         db = np.sum(dZ, axis=1, keepdims=True) / m
         dA_prev = np.dot(W.T, dZ)
         return dA_prev, dW, db
 
     def _backward_propagation_network(self, A:np.array, Y: np.array):
-        dA = - (np.divide(Y, A) - np.divide(1 - Y, 1 - A))
+        if self.activations[-1] == 'softmax':
+            dA = A - Y  # For softmax + cross-entropy
+        else:
+            dA = - (np.divide(Y, A) - np.divide(1 - Y, 1 - A))
+        
         for i in reversed(range(1, len(self.dimensions))): 
             dA_prev, dW, db = self._backward_propagation_layer(dA, i)
             # Saving values to cache for backward propagation
             self.cache['dA' + str(i-1)] = dA_prev
             self.grads['dW' + str(i)] = dW
             self.grads['db' + str(i)] = db
+            dA = dA_prev  # Update dA for the next layer
 
     def _update_parameters(self):
         for i in range(len(self.dimensions) -1):
@@ -131,7 +143,7 @@ class DeepNeuralNetwork:
             layer_size = self.dimensions[i + 1]
             prev_layer_size = self.dimensions[i]
             # Weights should be initialized by random values
-            self.parameters['W' + str(i+1)] = np.random.rand(layer_size, prev_layer_size) * 0.01
+            self.parameters['W' + str(i+1)] = np.random.randn(layer_size, prev_layer_size) * np.sqrt(2.0 / prev_layer_size)
             ## Biases can be initialized by zeroes
             self.parameters['b' + str(i+1)] = np.zeros((layer_size, 1))
 
@@ -159,7 +171,7 @@ class DeepNeuralNetwork:
             predictions = np.zeros_like(A)
             predictions[np.argmax(A, axis=0), np.arange(A.shape[1])] = 1
             return predictions
-
+        # If output layer has one neuron, assume binary classification
         else:
             return (A > 0.5).astype(int)
     
@@ -171,3 +183,5 @@ class DeepNeuralNetwork:
         accuracy = 100 - np.mean(np.abs(predictions - Y_test)) * 100
         print(f"Test cost: {L}")
         print(f"Test accuracy: {accuracy:.2f}%")
+        return accuracy
+    
