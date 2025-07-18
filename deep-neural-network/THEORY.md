@@ -80,14 +80,14 @@ Gradient descent is an iterative optimization algorithm used to train neural net
 
 ```mermaid
 flowchart TD
-    A[Start] --> B{Initialize Parameters W, b};
-    B --> C{Loop for number of iterations};
-    C --> D[Forward Propagation: Calculate Y_hat];
-    D --> E[Compute Cost J(Y_hat, Y)];
-    E --> F[Backward Propagation: Calculate Gradients dW, db];
-    F --> G[Update Parameters: W = W - alpha * dW, b = b - alpha * db];
-    G --> C;
-    C --> H[End];
+    A[Start] --> B{Initialize Parameters W, b}
+    B --> C{Loop for number of iterations}
+    C --> D[Forward Propagation: Calculate Y_hat]
+    D --> E["Compute Cost J(Y_hat, Y)"]
+    E --> F["Backward Propagation: Calculate Gradients dW, db"]
+    F --> G["Update Parameters: W = W - alpha * dW, b = b - alpha * db"]
+    G --> C
+    C --> H[End]
 ```
 
 The key steps are:
