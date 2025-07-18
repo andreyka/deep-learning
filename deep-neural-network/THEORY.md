@@ -11,7 +11,7 @@ This manual describes the gradient descent algorithm implemented by the reposito
 
 ## Data Representation
 
-To train a neural network, we need a dataset. This dataset is typically split into a training set and a testing set.
+To train a neural network, we need a dataset. This dataset is typically split into a training set and a testing sets. These sets follow a specific notation: 
 
 *   `X`: The input data, represented as a matrix of shape (`n_x`, `m`).
 *   `Y`: The corresponding labels or true values for the input data, represented as a vector of shape (`1`, `m`).
