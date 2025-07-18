@@ -101,45 +101,30 @@ The key steps are:
 
 This cycle is repeated until the cost is minimized, resulting in a trained model.
 
-## Vectorized Implementation (Pseudocode)
+## Vectorized Implementation
 
 Here is a more detailed look at the vectorized implementation for a deep neural network.
 
 ### Forward Propagation
+Initialize `A[0] = X`.
 
-For each layer `l` from 1 to `L`:
-`Z[l] = W[l] . A[l-1] + b[l]`
-`A[l] = g[l](Z[l])`
+**For `l` from 1 to `L`:**
+*   `Z[l] = W[l] . A[l-1] + b[l]`
+*   `A[l] = g[l](Z[l])` (where `g` is the activation function)
 
-Where:
-*   `A[0] = X` (the input data)
-*   `g[l]` is the activation function for layer `l` (e.g., ReLU, Sigmoid).
-*   `W[l]` and `b[l]` are the weights and biases for layer `l`.
-*   The values `A[l]` and `Z[l]` are stored in a `cache` for use in backpropagation.
-
-### Compute Cost (for Binary Classification)
-
-`J = -1/m * sum(Y * log(A[L]) + (1 - Y) * log(1 - A[L]))`
-
-Where `A[L]` is the output of the final layer (the prediction `Y_hat`).
+### Cost Function (Binary Classification)
+`J = -1/m * (Y . log(A[L].T) + (1 - Y) . log(1 - A[L].T))`
 
 ### Backward Propagation
-
-First, calculate the initial gradient for the output layer `L`:
 `dA[L] = - (Y / A[L] - (1 - Y) / (1 - A[L]))`
 
-Then, for each layer `l` from `L` down to 1:
-`dZ[l] = dA[l] * g'[l](Z[l])`
-`dW[l] = 1/m * dZ[l] . A[l-1].T`
-`db[l] = 1/m * sum(dZ[l], axis=1, keepdims=True)`
-`dA[l-1] = W[l].T . dZ[l]`
-
-Where:
-*   `g'[l]` is the derivative of the activation function for layer `l`.
-*   The values `A[l-1]` and `Z[l]` are retrieved from the `cache`.
+**For `l` from `L` down to 1:**
+*   `dZ[l] = dA[l] * g'[l](Z[l])` (where `g'` is the derivative of the activation)
+*   `dW[l] = 1/m * dZ[l] . A[l-1].T`
+*   `db[l] = 1/m * sum(dZ[l], axis=1)`
+*   `dA[l-1] = W[l].T . dZ[l]`
 
 ### Update Parameters
-
-For each layer `l` from 1 to `L`:
-`W[l] = W[l] - learning_rate * dW[l]`
-`b[l] = b[l] - learning_rate * db[l]`
+**For `l` from 1 to `L`:**
+*   `W[l] = W[l] - learning_rate * dW[l]`
+*   `b[l] = b[l] - learning_rate * db[l]`
